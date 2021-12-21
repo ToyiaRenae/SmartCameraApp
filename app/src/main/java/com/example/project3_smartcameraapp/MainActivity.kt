@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
@@ -22,7 +23,6 @@ class MainActivity : AppCompatActivity() {
 
         // Build a button that launches the camera app
         findViewById<Button>(R.id.button).setOnClickListener {
-            // TODO: Launch camera app
 
             // Create an intent that launches the camera and takes a picture
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -44,12 +44,13 @@ class MainActivity : AppCompatActivity() {
             // Set bitmap as imageView image
             findViewById<ImageView>(R.id.imageView).setImageBitmap(imageBitmap)
 
+            val imageOrientationDegrees = 270
             // Prepare bitmap for ML Kit APIs
             val imageForMLKit = InputImage.fromBitmap(imageBitmap, 0)
 
             // Utilize image labeling API
             val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-
+            var oPtext = " "
             labeler.process(imageForMLKit)
                 .addOnSuccessListener { labels ->
                     Log.i("LaToyia", "Successfully processed image")
@@ -58,6 +59,9 @@ class MainActivity : AppCompatActivity() {
                         val text = label.text
                         // The confidence score of what was detected
                         val confidence = label.confidence
+                        val textView = findViewById<TextView>(R.id.textView)
+                        oPtext += "$text : $confidence %\n"
+                        textView.text = oPtext
                         val index = label.index
                         Log.i("LaToyia", "detected" + text + "with confidence: " + confidence)
                     }
